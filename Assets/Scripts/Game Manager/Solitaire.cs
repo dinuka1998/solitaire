@@ -5,6 +5,9 @@ using UnityEngine;
 public class Solitaire : MonoBehaviour
 {
 
+     [SerializeField]
+    private Sprite[] cardfaces;
+
     [SerializeField]
     private static string[] suits = new string[] {"C", "D", "H", "S"};
     [SerializeField]
