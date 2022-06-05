@@ -13,6 +13,7 @@ public class UpdateSprite : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Selectable selectable;
     private Solitaire solitaire;
+    private UserInputs userInput;
 
 
     // Start is called before the first frame update
@@ -20,6 +21,7 @@ public class UpdateSprite : MonoBehaviour
 
         List<string> deck = Solitaire.GenerateDeck();
         solitaire = FindObjectOfType<Solitaire>();
+        userInput = FindObjectOfType<UserInputs>();
 
         int deckCount = 0;
         foreach (string card in deck) {
@@ -51,6 +53,24 @@ public class UpdateSprite : MonoBehaviour
             spriteRenderer.sprite = cardBack;
 
         }
+
+        if(userInput.GetSelectedCard()) {
+
+            if (name == userInput.GetSelectedCard().name) {
+
+                spriteRenderer.color = Color.yellow;
+
+            }
+            else {
+
+                spriteRenderer.color = Color.white;
+
+            }
+
+        }
+
+
+       
         
     }
 }

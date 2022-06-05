@@ -128,6 +128,7 @@ public class Solitaire : MonoBehaviour
                     bottomCardPossitions[counter].transform);
 
                 newCard.name = card;
+                newCard.GetComponent<Selectable>().row = counter;
 
                 if ( card == bottomRow[counter][bottomRow[counter].Count - 1]) {
 
@@ -242,6 +243,11 @@ public class Solitaire : MonoBehaviour
             float xOffset = 2.5f;
             float zOffset = -0.2f;
 
+            if( deckLocation == trips-1 ) {
+
+                     deckButton.GetComponent<SpriteRenderer>().enabled = false;
+            }
+
             foreach (string card in deckTrips[deckLocation]) {
 
                 GameObject newTopCard = Instantiate(cardPrefab, new Vector3(deckButton.transform.position.x + xOffset, deckButton.transform.position.y, deckButton.transform.position.z + zOffset), Quaternion.identity, deckButton.transform);
@@ -252,13 +258,14 @@ public class Solitaire : MonoBehaviour
                 newTopCard.name = card;
                 tripsOnDisplay.Add(card);
                 newTopCard.GetComponent<Selectable>().faceUp = true;
+                newTopCard.GetComponent<Selectable>().inDeckPile = true;
                 
             }
             deckLocation++;
 
         }
         else {
-            Debug.Log("Now restoking");
+          
             ReStackTopDeck();
 
         }
@@ -270,6 +277,7 @@ public class Solitaire : MonoBehaviour
         foreach (string card in discardPile) {
 
             deck.Add(card);
+            deckButton.GetComponent<SpriteRenderer>().enabled = true;
 
         }
         discardPile.Clear();

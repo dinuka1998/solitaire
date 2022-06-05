@@ -5,6 +5,8 @@ using UnityEngine;
 public class UserInputs : MonoBehaviour
 {
 
+    [SerializeField]
+    private GameObject selectedCard;
     private Solitaire solitaire; 
 
     private string DECK_TAG = "Deck";
@@ -17,6 +19,7 @@ public class UserInputs : MonoBehaviour
     {
         
         solitaire = FindObjectOfType<Solitaire>();
+        selectedCard = this.gameObject;
 
     }
 
@@ -44,7 +47,7 @@ public class UserInputs : MonoBehaviour
                 }
                 else if (hit.collider.CompareTag(CARD_TAG)) {
 
-                    Card();
+                    Card(hit.collider.gameObject);
 
                 }
                 else if (hit.collider.CompareTag(TOP_ROW_TAG)) {
@@ -70,9 +73,32 @@ public class UserInputs : MonoBehaviour
 
     }
 
-    void Card() {
+    void Card(GameObject selected) {
 
-        print("clicked on the Card");
+
+        if (selectedCard == this.gameObject) {
+
+            selectedCard = selected;
+
+        }
+        else if ( selectedCard != selected) {
+
+            if (Stackble(selected)) {
+
+
+
+            }
+            else{
+
+                selectedCard = selected;
+
+            }
+
+           
+
+        }
+
+       
         
     }
 
@@ -86,6 +112,71 @@ public class UserInputs : MonoBehaviour
 
         print("clicked on the Botom Row");
         
+    }
+
+    public GameObject GetSelectedCard() {
+
+        return this.selectedCard;
+        
+    }
+
+    bool Stackble(GameObject selected) {
+
+        Selectable s1 = selectedCard.GetComponent<Selectable>();
+        Selectable s2 = selected.GetComponent<Selectable>();
+
+        if(s2.top) {
+
+            if(s1.suit == s2.suit || (s1.value == 1 && s2.suit == null)) {
+
+                if(s1.value == s2.value + 1) {
+
+                    return true;
+
+                }
+
+            }
+            else {
+
+                return false;
+
+            }
+
+        }
+        else {
+
+            if(s1.value == s2.value -1) {
+
+                bool card1Red = true;
+                bool card2Red = true;        
+
+                if( s1.suit == "C" || s1.suit == "S") {
+
+                    card1Red = false;
+
+                }  
+
+                if( s2.suit == "C" || s2.suit == "S") {
+
+                    card1Red = false;
+
+                }  
+
+                if(card1Red == card2Red) {
+
+                    return false;
+                }
+                else { 
+
+                    return true;
+                }
+
+            }
+
+        }
+
+        return false;
+
     }
 
 }
