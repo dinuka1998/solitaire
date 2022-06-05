@@ -16,19 +16,19 @@ public class Solitaire : MonoBehaviour
     private GameObject cardPrefab;
 
     [SerializeField]
-    private GameObject[] bottomCardPossitions;
+    public GameObject[] bottomCardPossitions;
     [SerializeField]
-    private GameObject[] topCardPossitions;
+    public GameObject[] topCardPossitions;
 
     [SerializeField]
     private static string[] suits = new string[] {"C", "D", "H", "S"};
     [SerializeField]
     private static string[] values = new string[] {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 
-    private List<string>[] bottomRow;
-    private List<string>[] topRow;
+    public List<string>[] bottomRow;
+    public List<string>[] topRow;
 
-    private List<string> tripsOnDisplay = new List<string>();
+    public List<string> tripsOnDisplay = new List<string>();
     private List<List<string>> deckTrips = new List<List<string>>();
 
 
@@ -283,6 +283,12 @@ public class Solitaire : MonoBehaviour
         discardPile.Clear();
         SortDeckIntoTrips();
          
+    }
+
+    public List<string> GetTripsOnDisplay() {
+
+        return this.tripsOnDisplay;
+
     }
 
 }//class

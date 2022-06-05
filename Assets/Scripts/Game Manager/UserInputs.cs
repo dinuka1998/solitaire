@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class UserInputs : MonoBehaviour
 {
@@ -75,6 +76,26 @@ public class UserInputs : MonoBehaviour
 
     void Card(GameObject selected) {
 
+        if(!selected.GetComponent<Selectable>().faceUp) {
+
+            if(!blocked(selected)) {
+
+                selected.GetComponent<Selectable>().faceUp = true;
+                selectedCard = this.gameObject;
+
+            }
+
+        }
+        else if(selected.GetComponent<Selectable>().inDeckPile) {
+
+            if(!blocked(selected)) {
+
+                selectedCard = selected;
+
+            }  
+
+        }
+
 
         if (selectedCard == this.gameObject) {
 
@@ -85,7 +106,7 @@ public class UserInputs : MonoBehaviour
 
             if (Stackble(selected)) {
 
-
+                Stack(selected);
 
             }
             else{
@@ -125,57 +146,153 @@ public class UserInputs : MonoBehaviour
         Selectable s1 = selectedCard.GetComponent<Selectable>();
         Selectable s2 = selected.GetComponent<Selectable>();
 
-        if(s2.top) {
 
-            if(s1.suit == s2.suit || (s1.value == 1 && s2.suit == null)) {
+        if(!s2.inDeckPile){
+            if(s2.top) {
 
-                if(s1.value == s2.value + 1) {
+                if(s1.suit == s2.suit || (s1.value == 1 && s2.suit == null)) {
 
-                    return true;
+                   if(s1.value == s2.value + 1) {
+
+                      return true;
+
+                  }
+
+              }
+              else {
+
+                  return false;
+
+               }
+
+           }
+            else {
+
+                if(s1.value == s2.value -1) {
+
+                    bool card1Red = true;
+                    bool card2Red = true;        
+
+                    if( s1.suit == "C" || s1.suit == "S") {
+
+                        card1Red = false;
+
+                    }  
+
+                    if( s2.suit == "C" || s2.suit == "S") {
+
+                        card1Red = false;
+
+                    }  
+
+                    if(card1Red == card2Red) {
+
+                        return false;
+                    }
+                    else { 
+
+                        return true;
+                    }
 
                 }
 
             }
-            else {
+        }
 
-                return false;
+        return false;
 
-            }
+    }
+
+    void Stack(GameObject selected) {
+
+        Selectable s1 = selectedCard.GetComponent<Selectable>(); 
+        Selectable s2 = selected.GetComponent<Selectable>(); 
+        float yOffset  = 0.3f;
+
+
+        if(s2.top || !s2.top && s1.value == 13 ) {
+
+            yOffset = 0;
+
+        }
+
+        selectedCard.transform.position =  new Vector3(selected.transform.position.x, selected.transform.position.y - yOffset,  selected.transform.position.z -0.01f);
+        selectedCard.transform.parent = selected.transform;
+
+        if(s1.inDeckPile) {
+
+            solitaire.tripsOnDisplay.Remove(selectedCard.name);
+
+        }
+        else if(s1.top && s2.top && s1.value == 1) {
+
+            solitaire.topCardPossitions[s1.row].GetComponent<Selectable>().value = 0;
+            solitaire.topCardPossitions[s1.row].GetComponent<Selectable>().suit = null;
+
+        }
+        else if (s1.top) {
+
+              solitaire.topCardPossitions[s1.row].GetComponent<Selectable>().value = s1.value -1;
 
         }
         else {
 
-            if(s1.value == s2.value -1) {
+            solitaire.bottomRow[s1.row].Remove(selectedCard.name); 
 
-                bool card1Red = true;
-                bool card2Red = true;        
+        }
+        
+        s1.inDeckPile = false;
+        s1.row = s2.row;
 
-                if( s1.suit == "C" || s1.suit == "S") {
+        if(s2.top)
+        {
 
-                    card1Red = false;
+            solitaire.topCardPossitions[s1.row].GetComponent<Selectable>().value = s1.value;
+            solitaire.topCardPossitions[s1.row].GetComponent<Selectable>().suit = s1.suit;
+            s1.top = true;
 
-                }  
+        }
+        else{
 
-                if( s2.suit == "C" || s2.suit == "S") {
+            s1.top = false;
 
-                    card1Red = false;
+        }
 
-                }  
+        selectedCard = this.gameObject;
 
-                if(card1Red == card2Red) {
+    }
 
-                    return false;
-                }
-                else { 
+    bool blocked(GameObject selected) {
 
-                    return true;
-                }
+        Selectable s2 = selected.GetComponent<Selectable>();
+        if(s2.inDeckPile == true) {
+            if(s2.name == solitaire.tripsOnDisplay.Last())  {
+
+                return false;
+
+            }
+            else {
+
+                return true;
+
+            }
+
+
+        }
+        else {
+
+            if(s2.name == solitaire.bottomRow[s2.row].Last()) {
+
+                return false;
+
+            }
+            else {
+
+                return true;
 
             }
 
         }
-
-        return false;
 
     }
 
