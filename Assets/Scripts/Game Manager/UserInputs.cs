@@ -53,7 +53,6 @@ public class UserInputs : MonoBehaviour
 
     }
 
-
     void GetMouseClick() {
 
         if (Input.GetMouseButtonDown(0)) {
@@ -119,13 +118,17 @@ public class UserInputs : MonoBehaviour
 
                     if(DoubleClick()) {
 
-                        //auto stack
+                        AutoStack(selected);
 
                     }
 
                 }
-                selectedCard = selected;
+                else {
 
+                     selectedCard = selected;
+
+                }
+               
             }  
 
         }
@@ -150,6 +153,17 @@ public class UserInputs : MonoBehaviour
                 }
 
             }
+            else if ( selectedCard == selected) {
+
+                if(DoubleClick()) {
+
+                     AutoStack(selected);
+
+                }
+
+            }
+
+
 
         }
 
@@ -171,7 +185,7 @@ public class UserInputs : MonoBehaviour
 
    void BottomRow(GameObject selected) {
 
-        if(selected.CompareTag(CARD_TAG)) {
+        if(selectedCard.CompareTag(CARD_TAG)) {
 
             if(selectedCard.GetComponent<Selectable>().value == 13) {
 
@@ -259,7 +273,7 @@ public class UserInputs : MonoBehaviour
         float yOffset  = 0.3f;
 
 
-        if(s2.top || !s2.top && s1.value == 13 ) {
+        if(s2.top || (!s2.top && s1.value == 13 )) {
 
             yOffset = 0;
 
@@ -350,7 +364,6 @@ public class UserInputs : MonoBehaviour
 
         if(timer < doubleClickTime && clickCount == 2) {
 
-            print("double Click");
             return true;
 
         }
@@ -362,4 +375,86 @@ public class UserInputs : MonoBehaviour
 
     }
 
+    void AutoStack(GameObject selected) {
+
+        for (int i = 0; i < solitaire.topCardPossitions.Length; i++) {
+            
+            Selectable stack = solitaire.topCardPossitions[i].GetComponent<Selectable>();
+
+            if(selected.GetComponent<Selectable>().value == 1) {
+
+                if(solitaire.topCardPossitions[i].GetComponentInChildren<Selectable>().value == 0) {
+
+                    selectedCard = selected;
+                    Stack(stack.gameObject);
+                    break;
+
+                }
+
+            }
+            else {
+
+                if ((solitaire.topCardPossitions[i].GetComponent<Selectable>().suit == selectedCard.GetComponent<Selectable>().suit) && (solitaire.topCardPossitions[i].GetComponent<Selectable>().value == selectedCard.GetComponent<Selectable>().value - 1)) {
+
+                    if(HasNoChilderen(selectedCard)) {
+
+                        selectedCard = selected;
+                        string lastCardName = stack.suit + stack.value.ToString();
+
+                        if(stack.value == 1) {
+
+                            lastCardName = stack.suit + "A";
+
+                        }
+                        if(stack.value == 11) {
+
+                            lastCardName = stack.suit + "J";
+
+                        }
+                        if(stack.value == 12) {
+
+                            lastCardName = stack.suit + "Q";
+
+                        }
+                        if(stack.value == 13) {
+
+                            lastCardName = stack.suit + "K";
+
+                        }
+
+                        GameObject lastCard = GameObject.Find(lastCardName);
+                        Stack(lastCard);
+                        break;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    bool HasNoChilderen(GameObject card) {
+
+        int i = 0;
+        foreach(Transform child in card.transform) {
+
+            i++;
+
+        }
+        if(i == 0) {
+
+            return true;
+
+        }
+        else {
+
+            return false;
+
+        }
+
+
+    }
 }
