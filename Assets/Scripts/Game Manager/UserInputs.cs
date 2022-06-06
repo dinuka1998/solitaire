@@ -15,9 +15,12 @@ public class UserInputs : MonoBehaviour
     private string TOP_ROW_TAG = "TopRow";
     private string BOTTOM_ROW_TAG = "BottomRow";
 
+    private float timer;
+    private float doubleClickTime = 0.3f;
+    private int clickCount;
+
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         
         solitaire = FindObjectOfType<Solitaire>();
         selectedCard = this.gameObject;
@@ -26,6 +29,25 @@ public class UserInputs : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+
+        if(clickCount == 1) {
+
+            timer += Time.deltaTime;
+
+        }   
+        if(clickCount == 3) {
+
+            timer = 0;
+            clickCount = 1;
+
+        }
+        if(timer > doubleClickTime) {
+
+            timer = 0;
+            clickCount = 0;
+
+        }
+
         
         GetMouseClick();
 
@@ -35,6 +57,8 @@ public class UserInputs : MonoBehaviour
     void GetMouseClick() {
 
         if (Input.GetMouseButtonDown(0)) {
+
+            clickCount++;
 
             Vector3 mousePositon = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -71,11 +95,12 @@ public class UserInputs : MonoBehaviour
     void Deck() {
 
         solitaire.DealFromDeck();
+        selectedCard = this.gameObject;
 
     }
 
     void Card(GameObject selected) {
-
+       
         if(!selected.GetComponent<Selectable>().faceUp) {
 
             if(!blocked(selected)) {
@@ -87,31 +112,42 @@ public class UserInputs : MonoBehaviour
 
         }
         else if(selected.GetComponent<Selectable>().inDeckPile) {
-
+             
             if(!blocked(selected)) {
 
+                if(selectedCard == selected) {
+
+                    if(DoubleClick()) {
+
+                        //auto stack
+
+                    }
+
+                }
                 selectedCard = selected;
 
             }  
 
         }
+        else {
 
-
-        if (selectedCard == this.gameObject) {
+            if (selectedCard == this.gameObject) {
 
             selectedCard = selected; 
 
-        }
-        else if ( selectedCard != selected) {
-
-            if (Stackble(selected)) {
-
-                Stack(selected);
-
             }
-            else{
+            else if ( selectedCard != selected) {
 
-                selectedCard = selected;
+                if (Stackble(selected)) {
+
+                    Stack(selected);
+
+                }
+                else{
+
+                    selectedCard = selected;
+
+                }
 
             }
 
@@ -280,6 +316,7 @@ public class UserInputs : MonoBehaviour
         Selectable s2 = selected.GetComponent<Selectable>();
 
         if(s2.inDeckPile == true) {
+
             if(s2.name == solitaire.tripsOnDisplay.Last())  {
 
                 return false;
@@ -306,6 +343,22 @@ public class UserInputs : MonoBehaviour
             }
 
         }
+
+    }
+
+    bool DoubleClick() {
+
+        if(timer < doubleClickTime && clickCount == 2) {
+
+            print("double Click");
+            return true;
+
+        }
+        else {
+
+            return false;
+
+        }   
 
     }
 
