@@ -11,6 +11,11 @@ public class Solitaire : MonoBehaviour
 
     [SerializeField]
     private GameObject deckButton;
+    [SerializeField]
+    private Sprite emptySlot;
+    [SerializeField]
+    private Sprite cardBack;
+    
 
     [SerializeField]
     private GameObject cardPrefab;
@@ -245,7 +250,7 @@ public class Solitaire : MonoBehaviour
 
             if( deckLocation == trips-1 ) {
 
-                     deckButton.GetComponent<SpriteRenderer>().enabled = false;
+                     deckButton.GetComponent<SpriteRenderer>().sprite = emptySlot;
             }
 
             foreach (string card in deckTrips[deckLocation]) {
@@ -274,10 +279,11 @@ public class Solitaire : MonoBehaviour
 
     void ReStackTopDeck() {
 
+        deck.Clear();
         foreach (string card in discardPile) {
 
             deck.Add(card);
-            deckButton.GetComponent<SpriteRenderer>().enabled = true;
+            deckButton.GetComponent<SpriteRenderer>().sprite = cardBack;
 
         }
         discardPile.Clear();

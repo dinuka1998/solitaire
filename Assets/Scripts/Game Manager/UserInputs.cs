@@ -53,12 +53,12 @@ public class UserInputs : MonoBehaviour
                 }
                 else if (hit.collider.CompareTag(TOP_ROW_TAG)) {
 
-                    TopRow();
+                    TopRow(hit.collider.gameObject);
 
                 }
                 else if (hit.collider.CompareTag(BOTTOM_ROW_TAG)) {
 
-                    BottomRow();
+                    BottomRow(hit.collider.gameObject);
 
                 }
 
@@ -99,7 +99,7 @@ public class UserInputs : MonoBehaviour
 
         if (selectedCard == this.gameObject) {
 
-            selectedCard = selected;
+            selectedCard = selected; 
 
         }
         else if ( selectedCard != selected) {
@@ -115,23 +115,35 @@ public class UserInputs : MonoBehaviour
 
             }
 
-           
-
         }
 
-       
+    }
+
+   void TopRow(GameObject selected) {
+
+       if(selectedCard.CompareTag(CARD_TAG)) {
+
+           if(selectedCard.GetComponent<Selectable>().value == 1) {
+
+               Stack(selected);
+
+           }
+
+       }
         
     }
 
-   void TopRow() {
+   void BottomRow(GameObject selected) {
 
-        print("clicked on the Top Row");
-        
-    }
+        if(selected.CompareTag(CARD_TAG)) {
 
-   void BottomRow() {
+            if(selectedCard.GetComponent<Selectable>().value == 13) {
 
-        print("clicked on the Botom Row");
+                Stack(selected);
+
+            }
+
+        }
         
     }
 
@@ -145,7 +157,6 @@ public class UserInputs : MonoBehaviour
 
         Selectable s1 = selectedCard.GetComponent<Selectable>();
         Selectable s2 = selected.GetComponent<Selectable>();
-
 
         if(!s2.inDeckPile){
             if(s2.top) {
@@ -181,17 +192,19 @@ public class UserInputs : MonoBehaviour
 
                     if( s2.suit == "C" || s2.suit == "S") {
 
-                        card1Red = false;
+                        card2Red = false;
 
                     }  
 
                     if(card1Red == card2Red) {
 
                         return false;
+
                     }
                     else { 
 
                         return true;
+
                     }
 
                 }
@@ -265,6 +278,7 @@ public class UserInputs : MonoBehaviour
     bool blocked(GameObject selected) {
 
         Selectable s2 = selected.GetComponent<Selectable>();
+
         if(s2.inDeckPile == true) {
             if(s2.name == solitaire.tripsOnDisplay.Last())  {
 
@@ -276,7 +290,6 @@ public class UserInputs : MonoBehaviour
                 return true;
 
             }
-
 
         }
         else {
